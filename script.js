@@ -212,13 +212,13 @@ async function login() {
     document.getElementById("loginModal").classList.add("hidden");
     document.getElementById("mainPage").classList.remove("hidden");
 
-    if (user.role === "운영") {
-      document.getElementById("adminSection").classList.remove("hidden");
-      loadUsers();
-    } else {
-      document.getElementById("userSection").classList.remove("hidden");
-      showUserData(user.name);
-    }
+    if (user.role === "운영" || user.role === "admin") {
+  document.getElementById("adminSection").classList.remove("hidden");
+  loadUsers();
+} else {
+  document.getElementById("userSection").classList.remove("hidden");
+  showUserData(user.name);
+}
 
   } catch (error) {
     console.error(error);
