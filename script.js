@@ -8,8 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const phoneInput = document.getElementById("phone");
   const signupIdInput = document.getElementById("signupId");
   const nameInput = document.getElementById("name");
-  const courseSelect = document.getElementById("course");
-  const csvFile = document.getElementById("csvFile");
 
   if (phoneInput) {
     phoneInput.addEventListener("input", onPhoneInput);
@@ -23,20 +21,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (signupIdInput) {
-    signupIdInput.addEventListener("input", (e) => {
+    signupIdInput.addEventListener("input", () => {
       isIdChecked = false;
       checkedIdValue = "";
-
-      if (courseSelect) {
-        courseSelect.style.display =
-          e.target.value === "admin" ? "none" : "block";
-      }
     });
   }
 
-  if (csvFile) {
-    csvFile.addEventListener("change", uploadCsvToFirestore);
+  const loginPw = document.getElementById("loginPw");
+  const username = document.getElementById("username");
+
+  function handleEnter(e) {
+    if (e.key === "Enter") {
+      login();
+    }
   }
+
+  if (loginPw) loginPw.addEventListener("keypress", handleEnter);
+  if (username) username.addEventListener("keypress", handleEnter);
+});
 });
 
 
@@ -116,26 +118,24 @@ async function checkDuplicate() {
 
 
 // =============================
-// 회원가입 (🔥 핵심 수정 완료)
+// 회원가입
 // =============================
 async function signup() {
-  const courseEl = document.getElementById("course");
-  const nameEl = document.getElementById("name");
-
-  const course = courseEl ? courseEl.value : "";
-  const name = nameEl ? nameEl.value.trim() : "";
-
+  const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
+
   const emailFront = document.getElementById("emailFront").value.trim();
   const emailBack = document.getElementById("emailBack").value.trim();
+
   const signupId = document.getElementById("signupId").value.trim();
   const signupPw = document.getElementById("signupPw").value;
   const signupPwConfirm = document.getElementById("signupPwConfirm").value;
 
-  let role = signupId === "admin" ? "admin" : "user";
+  // ✅ 역할 선택
+  const role = document.getElementById("role").value;
 
-  if (role !== "admin" && !course) return alert("과정 선택 필요");
   if (!name) return alert("이름 입력");
+  if (!role) return alert("역할 선택");
 
   if (!isValidPhone(phone)) {
     return alert("전화번호 형식 오류 (010-0000-0000)");
@@ -160,7 +160,6 @@ async function signup() {
     return alert("비밀번호 불일치");
   }
 
-  // 🔥 핵심: 실제 이메일 사용
   const email = `${emailFront}@${emailBack}`;
 
   try {
@@ -171,8 +170,7 @@ async function signup() {
       role,
       name,
       phone,
-      email, // 🔥 동일하게 저장
-      course: role === "admin" ? null : course
+      email
     });
 
     alert("회원가입 완료");
@@ -180,20 +178,19 @@ async function signup() {
 
   } catch (error) {
     console.error(error);
-    alert(error.message); // 🔥 원인 확인 가능
+    alert(error.message);
   }
 }
 
 
 // =============================
-// 로그인 (🔥 핵심 수정 완료)
+// 로그인
 // =============================
 async function login() {
   const id = document.getElementById("username").value.trim();
   const pw = document.getElementById("loginPw").value;
 
   try {
-    // 🔥 Firestore에서 이메일 조회
     const doc = await db.collection("users").doc(id).get();
 
     if (!doc.exists) {
@@ -203,13 +200,13 @@ async function login() {
 
     const user = doc.data();
 
-    // 🔥 실제 이메일로 로그인
     await auth.signInWithEmailAndPassword(user.email, pw);
 
     document.getElementById("loginModal").classList.add("hidden");
     document.getElementById("mainPage").classList.remove("hidden");
 
-    if (user.role === "admin") {
+    // 역할별 분기
+    if (user.role === "운영") {
       document.getElementById("adminSection").classList.remove("hidden");
       loadUsers();
     } else {
@@ -231,15 +228,7 @@ async function loadUsers() {
   const list = document.getElementById("userList");
   list.innerHTML = "";
 
-  const course = document.getElementById("adminCourseFilter").value;
-
-  let query = db.collection("users");
-
-  if (course) {
-    query = query.where("course", "==", course);
-  }
-
-  const snapshot = await query.get();
+  const snapshot = await db.collection("users").get();
 
   snapshot.forEach(doc => {
     const u = doc.data();
@@ -248,20 +237,16 @@ async function loadUsers() {
     div.className = "user-card";
 
     div.innerHTML = `
-      <div class="user-top">
-        <div>${u.name} (${u.id})</div>
+      <div>${u.name} (${u.role})</div>
+
+      <div>
+        전화번호<br>
+        <input id="p-${u.id}" value="${u.phone || ''}">
       </div>
 
-      <div class="user-bottom">
-        <div>
-          전화번호<br>
-          <input id="p-${u.id}" value="${u.phone || ''}">
-        </div>
-
-        <div>
-          이메일<br>
-          <input id="e-${u.id}" value="${u.email || ''}">
-        </div>
+      <div>
+        이메일<br>
+        <input id="e-${u.id}" value="${u.email || ''}">
       </div>
 
       <button onclick="updateUser('${u.id}')">수정</button>
@@ -285,34 +270,6 @@ async function updateUser(id) {
   });
 
   alert("수정 완료");
-}
-
-
-// =============================
-// CSV 업로드
-// =============================
-function uploadCsvToFirestore(e) {
-  const file = e.target.files[0];
-  const reader = new FileReader();
-
-  reader.onload = async function (event) {
-    const rows = event.target.result.split("\n").slice(1);
-
-    for (let row of rows) {
-      const [name, subject, score] = row.split(",");
-      if (!name) continue;
-
-      await db.collection("scores").add({
-        name,
-        subject,
-        score: Number(score)
-      });
-    }
-
-    alert("업로드 완료");
-  };
-
-  reader.readAsText(file);
 }
 
 
