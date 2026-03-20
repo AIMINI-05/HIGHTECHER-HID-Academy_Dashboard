@@ -1,1 +1,6 @@
+<최종 배포 연결>
 firebase deploy --only hosting:academy
+<깃허브 코드 수정사항 발생시 업로드>
+git add .
+git commit -m "수정"
+git push
