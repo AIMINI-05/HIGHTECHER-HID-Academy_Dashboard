@@ -1,5 +1,9 @@
 <최종 배포 연결>
+<<<<<<< HEAD
+firebase deploy
+=======
 firebase deploy --only hosting:academy
+>>>>>>> 533643da1a2b620afb68a75c27c4e8a527ba2c5f
 <깃허브 코드 수정사항 발생시 업로드>
 git add .
 git commit -m "수정"
