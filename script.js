@@ -9,6 +9,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupIdInput = document.getElementById("signupId");
   const nameInput = document.getElementById("name");
 
+  // 🔥 로그인 엔터 처리 (핵심 추가)
+  const pwInput = document.getElementById("loginPw");
+  const idInput = document.getElementById("username");
+
+  if (pwInput) {
+    pwInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        login();
+      }
+    });
+  }
+
+  // 👉 아이디 입력창에서도 엔터 가능하게
+  if (idInput) {
+    idInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        login();
+      }
+    });
+  }
+
   if (phoneInput) {
     phoneInput.addEventListener("input", onPhoneInput);
     phoneInput.addEventListener("blur", validatePhoneOnBlur);
@@ -26,19 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
       checkedIdValue = "";
     });
   }
-
-  const loginPw = document.getElementById("loginPw");
-  const username = document.getElementById("username");
-
-  function handleEnter(e) {
-    if (e.key === "Enter") {
-      login();
-    }
-  }
-
-  if (loginPw) loginPw.addEventListener("keypress", handleEnter);
-  if (username) username.addEventListener("keypress", handleEnter);
-});
 });
 
 
@@ -131,7 +139,6 @@ async function signup() {
   const signupPw = document.getElementById("signupPw").value;
   const signupPwConfirm = document.getElementById("signupPwConfirm").value;
 
-  // ✅ 역할 선택
   const role = document.getElementById("role").value;
 
   if (!name) return alert("이름 입력");
@@ -205,7 +212,6 @@ async function login() {
     document.getElementById("loginModal").classList.add("hidden");
     document.getElementById("mainPage").classList.remove("hidden");
 
-    // 역할별 분기
     if (user.role === "운영") {
       document.getElementById("adminSection").classList.remove("hidden");
       loadUsers();
