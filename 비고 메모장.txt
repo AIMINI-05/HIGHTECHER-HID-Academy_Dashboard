@@ -4,3 +4,5 @@ firebase deploy --only hosting:academy
 git add .
 git commit -m "수정"
 git push
+<사이트 주소>
+https://hi-d-academy.web.app
