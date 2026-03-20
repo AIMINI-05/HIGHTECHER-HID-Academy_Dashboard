@@ -1,6 +1,8 @@
 {
   "projects": {
-    "default": "dhfkzm-37f92"
+    "default": "dhfkzm-37f92",
+    "dklsf": "dhfkzm-37f92",
+    " firebase use --add": "dhfkzm-37f92"
   },
   "targets": {
     "dhfkzm-37f92": {
