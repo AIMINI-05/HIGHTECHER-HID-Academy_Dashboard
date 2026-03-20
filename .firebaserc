@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "dhfkzm-37f92"
+  },
+  "targets": {
+    "dhfkzm-37f92": {
+      "hosting": {
+        "academy": [
+          "hi-d-academy"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

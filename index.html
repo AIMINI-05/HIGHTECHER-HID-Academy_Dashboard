@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오라클 아카데미</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ================= 로그인 ================= -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <h2>로그인</h2>
+
+    <input type="text" id="username" placeholder="아이디" />
+    <input type="password" id="loginPw" placeholder="비밀번호" />
+
+    <button onclick="login()">로그인</button>
+    <button class="signup-btn" onclick="openSignup()">회원가입</button>
+  </div>
+</div>
+
+<!-- ================= 회원가입 ================= -->
+<div id="signupPage" class="modal hidden">
+  <div class="modal-content signup-content">
+
+    <button class="back-btn" onclick="goBack()">&lt;</button>
+
+    <h2>회원가입</h2>
+
+    <!-- 과정 선택 -->
+    <select id="course">
+      <option value="">과정 선택</option>
+      <option value="Oracle Academy 1기">Oracle Academy 1기</option>
+      <option value="Oracle Academy 2기">Oracle Academy 2기</option>
+      <option value="Oracle Academy 3기">Oracle Academy 3기</option>
+    </select>
+
+    <!-- 이름 -->
+    <input type="text" id="name" placeholder="이름" />
+
+    <!-- 전화번호 -->
+    <input type="text" id="phone" placeholder="전화번호 (010-0000-0000)" />
+
+    <!-- 이메일 -->
+    <div class="email-row">
+      <input type="text" id="emailFront" placeholder="이메일 아이디" />
+      <span class="email-at">@</span>
+      <input type="text" id="emailBack" placeholder="도메인 (naver.com)" />
+    </div>
+
+    <!-- 아이디 -->
+    <input type="text" id="signupId" placeholder="아이디" />
+    <button onclick="checkDuplicate()">아이디 중복확인</button>
+
+    <!-- 비밀번호 -->
+    <input type="password" id="signupPw" placeholder="비밀번호" />
+    <input type="password" id="signupPwConfirm" placeholder="비밀번호 확인" />
+
+    <button onclick="signup()">회원가입</button>
+  </div>
+</div>
+
+<!-- ================= 메인 ================= -->
+<div id="mainPage" class="hidden">
+
+  <h1>내일하이</h1>
+
+  <!-- ===== 관리자 영역 ===== -->
+  <div id="adminSection" class="dashboard-card hidden">
+
+    <h2>관리자 페이지</h2>
+
+    <!-- 과정 필터 -->
+    <select id="adminCourseFilter" onchange="loadUsers()">
+      <option value="">전체 과정</option>
+      <option value="Oracle Academy 1기">Oracle Academy 1기</option>
+      <option value="Oracle Academy 2기">Oracle Academy 2기</option>
+      <option value="Oracle Academy 3기">Oracle Academy 3기</option>
+    </select>
+
+    <!-- ===== 유저 추가 폼 ===== -->
+    <div class="admin-form">
+
+      <input type="text" id="adminName" placeholder="이름" />
+      <input type="text" id="adminPhone" placeholder="전화번호" />
+      <input type="email" id="adminEmail" placeholder="이메일" />
+
+      <select id="adminRole">
+        <option value="">역할 선택</option>
+        <option value="훈련생">훈련생</option>
+        <option value="운영">운영</option>
+        <option value="교강사">교강사</option>
+      </select>
+
+      <button onclick="addUser()">유저 추가</button>
+    </div>
+
+    <!-- 유저 리스트 -->
+    <div id="userList"></div>
+
+  </div>
+
+  <!-- ===== 사용자 영역 ===== -->
+  <div id="userSection" class="dashboard-card hidden">
+    <h2>내 성취도</h2>
+    <ul id="result"></ul>
+  </div>
+
+</div>
+
+<!-- ================= Firebase ================= -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBldZ89_gH4GnQtOZBhlyCBWXODJKTi6dM",
+    authDomain: "dhfkzm-37f92.firebaseapp.com",
+    projectId: "dhfkzm-37f92",
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+
+<!-- JS -->
+<script src="script.js"></script>
+
+</body>
+</html>
